@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoTrack - Sustainability Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f1f8f4;
+            color: #26382d;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 240px;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            background: #14532d;
+            color: white;
+            padding: 25px 15px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo h2 {
+            font-size: 25px;
+        }
+
+        .logo p {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #c8e6c9;
+        }
+
+        .menu {
+            list-style: none;
+        }
+
+        .menu li {
+            margin: 8px 0;
+        }
+
+        .menu button {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: white;
+            padding: 13px;
+            text-align: left;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .menu button:hover,
+        .menu button.active {
+            background: #2e7d32;
+        }
+
+        /* MAIN */
+        .main {
+            margin-left: 240px;
+            padding: 25px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .topbar h1 {
+            color: #14532d;
+        }
+
+        .user-mini {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        /* SECTIONS */
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* CARDS */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 14px;
+            padding: 22px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+        }
+
+        .card h3 {
+            font-size: 14px;
+            color: #607d68;
+            margin-bottom: 12px;
+        }
+
+        .card .number {
+            font-size: 30px;
+            font-weight: bold;
+            color: #14532d;
+        }
+
+        .icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        /* CONTENT GRID */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+            margin-bottom: 20px;
+        }
+
+        .panel h2 {
+            margin-bottom: 18px;
+            color: #14532d;
+        }
+
+        /* PROGRESS */
+        .progress-box {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .progress {
+            height: 10px;
+            background: #e0e8e2;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #43a047;
+            border-radius: 20px;
+        }
+
+        /* ACTIVITIES */
+        .activity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 13px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .activity:last-child {
+            border-bottom: none;
+        }
+
+        .activity-name {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .points {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        /* FORM */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            margin-bottom: 6px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            border: 1px solid #ccd8cf;
+            border-radius: 7px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #2e7d32;
+        }
+
+        .btn {
+            border: none;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 7px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background: #1b5e20;
+        }
+
+        /* SCORE */
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 12px solid #66bb6a;
+            background: #f8fff9;
+        }
+
+        .score-circle strong {
+            font-size: 38px;
+            color: #14532d;
+        }
+
+        .score-circle span {
+            font-size: 13px;
+        }
+
+        /* CHALLENGES */
+        .challenge {
+            border: 1px solid #d8e5db;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .challenge h3 {
+            margin-bottom: 7px;
+        }
+
+        .challenge p {
+            font-size: 13px;
+            color: #607d68;
+        }
+
+        /* ACHIEVEMENTS */
+        .badges {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .badge {
+            text-align: center;
+            padding: 15px;
+            background: #f1f8f4;
+            border-radius: 10px;
+        }
+
+        .badge span {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .badge p {
+            font-size: 12px;
+        }
+
+        /* SUGGESTION */
+        .suggestion {
+            background: #e8f5e9;
+            border-left: 5px solid #43a047;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        /* PROFILE */
+        .profile-card {
+            max-width: 650px;
+        }
+
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-row:last-child {
+            border-bottom: none;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            color: #14532d;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1000px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .menu {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .menu li {
+                min-width: 130px;
+            }
+
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .badges {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<!-- LOGIN AND CREATE ACCOUNT -->
+<div id="authScreen" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:linear-gradient(135deg,#e8f5e9,#e3f2fd);">
+
+    <div style="background:white; width:100%; max-width:440px; padding:35px; border-radius:18px; box-shadow:0 10px 35px rgba(0,0,0,0.10);">
+
+        <div style="text-align:center; margin-bottom:25px;">
+            <h1 style="color:#14532d;">🌱 EcoTrack</h1>
+            <p style="margin-top:8px; color:#607d68;">Small habits. Bigger impact.</p>
+        </div>
+
+        <div style="display:flex; gap:10px; margin-bottom:25px;">
+            <button id="showLogin" type="button" class="btn" style="flex:1; margin:0;">Login</button>
+            <button id="showRegister" type="button" class="btn" style="flex:1; margin:0; background:#e8f5e9; color:#14532d;">Create Account</button>
+        </div>
+
+        <form id="loginForm">
+            <h2 style="color:#14532d; margin-bottom:18px;">Welcome Back!</h2>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label for="loginEmail">Email Address</label>
+                <input id="loginEmail" type="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom:15px;">
+                <label for="loginPassword">Password</label>
+                <input id="loginPassword" type="password" placeholder="Enter your password" required>
+            </div>
+
+            <button type="submit" class="btn" style="width:100%;">Login to EcoTrack</button>
+        </form>
+
+        <form id="registerForm" style="display:none;">
+            <h2 style="color:#14532d; margin-bottom:18px;">Start Your Journey!</h2>
+
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="registerName">Full Name</label>
+                <input id="registerName" type="text" placeholder="Enter your full name" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="registerEmail">Email Address</label>
+                <input id="registerEmail" type="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="registerContact">Contact Number</label>
+                <input id="registerContact" type="tel" placeholder="Enter your contact number" required>
+            </div>
+
+            <div class="form-group" style="margin-bottom:12px;">
+                <label for="registerPassword">Password (minimum 8 characters)</label>
+                <input id="registerPassword" type="password" minlength="8" placeholder="Create a password" required>
+            </div>
+
+            <button type="submit" class="btn" style="width:100%;">Create Account</button>
+        </form>
+
+        <p id="authMessage" role="status" style="margin-top:15px; text-align:center;"></p>
+    </div>
+</div>
+
+<!-- DASHBOARD: SHOW AFTER LOGIN -->
+<div id="appShell" style="display:none;">
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+    <div class="logo">
+        <h2>🌱 EcoTrack</h2>
+        <p>Sustainability Management</p>
+    </div>
+
+    <ul class="menu">
+        <li>
+            <button class="nav-btn active" data-section="dashboard">
+                📊 Dashboard
+            </button>
+        </li>
+
+        <li>
+            <button class="nav-btn" data-section="activity">
+                📝 Add Activity
+            </button>
+        </li>
+
+        <li>
+            <button class="nav-btn" data-section="challenges">
+                🎯 Challenges
+            </button>
+        </li>
+
+        <li>
+            <button class="nav-btn" data-section="achievements">
+                🏆 Achievements
+            </button>
+        </li>
+
+        <li>
+            <button class="nav-btn" data-section="leaderboard">
+                🥇 Leaderboard
+            </button>
+        </li>
+
+        <li>
+            <button class="nav-btn" data-section="profile">
+                👤 Profile
+            </button>
+        </li>
+    </ul>
+
+</aside>
+
+
+<!-- MAIN -->
+<main class="main">
+
+    <!-- TOP BAR -->
+    <div class="topbar">
+        <div>
+            <h1 id="pageTitle">EcoTrack Dashboard</h1>
+            <p>Track your journey towards a sustainable future 🌍</p>
+        </div>
+
+        <div class="user-mini">
+            👤 <span id="topUserName">Eco User</span>
+        </div>
+    </div>
+
+
+    <!-- ================= DASHBOARD ================= -->
+
+    <section id="dashboard" class="section active">
+
+        <div class="cards">
+
+            <div class="card">
+                <div class="icon">🌱</div>
+                <h3>Current Eco Score</h3>
+                <div class="number" id="ecoScore">75</div>
+                <small>Out of 100</small>
+            </div>
+
+            <div class="card">
+                <div class="icon">🏆</div>
+                <h3>Total Eco Points</h3>
+                <div class="number" id="ecoPoints">120</div>
+                <small>Points earned</small>
+            </div>
+
+            <div class="card">
+                <div class="icon">♻️</div>
+                <h3>Activities</h3>
+                <div class="number" id="activityCount">0</div>
+                <small>Total activities</small>
+            </div>
+
+            <div class="card">
+                <div class="icon">🎯</div>
+                <h3>Challenges</h3>
+                <div class="number">3</div>
+                <small>Active challenges</small>
+            </div>
+
+        </div>
+
+
+        <div class="content-grid">
+
+            <!-- LEFT -->
+            <div>
+
+                <div class="panel">
+                    <h2>📈 Weekly Progress</h2>
+
+                    <div class="progress-box">
+                        <div class="progress-label">
+                            <span>♻️ Recycling</span>
+                            <span>80%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" style="width:80%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-box">
+                        <div class="progress-label">
+                            <span>🚶 Walking</span>
+                            <span>65%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" style="width:65%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-box">
+                        <div class="progress-label">
+                            <span>🚌 Public Transport</span>
+                            <span>70%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" style="width:70%"></div>
+                        </div>
+                    </div>
+
+                    <div class="progress-box">
+                        <div class="progress-label">
+                            <span>🧴 Plastic Reduction</span>
+                            <span>55%</span>
+                        </div>
+
+                        <div class="progress">
+                            <div class="progress-bar" style="width:55%"></div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h2>📝 Recent Activities</h2>
+
+                    <div id="recentActivities">
+
+                        <div class="activity">
+                            <div class="activity-name">
+                                ♻️
+                                <span>Recycled materials</span>
+                            </div>
+
+                            <span class="points">+10 pts</span>
+                        </div>
+
+                        <div class="activity">
+                            <div class="activity-name">
+                                🚶
+                                <span>Walked 3 km</span>
+                            </div>
+
+                            <span class="points">+8 pts</span>
+                        </div>
+
+                        <div class="activity">
+                            <div class="activity-name">
+                                🚌
+                                <span>Used public transport</span>
+                            </div>
+
+                            <span class="points">+6 pts</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <div>
+
+                <div class="panel">
+
+                    <h2>🌱 Eco Score</h2>
+
+                    <div class="score-circle">
+                        <strong id="scoreCircle">75</strong>
+                        <span>/ 100</span>
+                    </div>
+
+                    <p style="text-align:center;margin-top:15px;">
+                        Keep making sustainable choices!
+                    </p>
+
+                </div>
+
+
+                <div class="panel">
+
+                    <h2>💡 Suggestions</h2>
+
+                    <div class="suggestion">
+                        🧴 Try reducing single-use plastic bottles.
+                    </div>
+
+                    <div class="suggestion">
+                        🚶 Walk or cycle for short-distance travel.
+                    </div>
+
+                    <div class="suggestion">
+                        ♻️ Continue recycling regularly.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ACTIVITY ================= -->
+
+    <section id="activity" class="section">
+
+        <div class="panel">
+
+            <h2>📝 Add Daily Activity</h2>
+
+            <p style="margin-bottom:20px;">
+                Record your daily sustainable activities.
+            </p>
+
+            <form id="activityForm">
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label>Activity Type</label>
+
+                        <select id="activityType" required>
+
+                            <option value="">Select Activity</option>
+
+                            <option value="Recycling">
+                                ♻️ Recycling
+                            </option>
+
+                            <option value="Plastic Reduction">
+                                🧴 Plastic Reduction
+                            </option>
+
+                            <option value="Food Waste Reduction">
+                                🍱 Food Waste Reduction
+                            </option>
+
+                            <option value="Public Transport">
+                                🚌 Public Transportation
+                            </option>
+
+                            <option value="Walking">
+                                🚶 Walking
+                            </option>
+
+                            <option value="Sustainable">
+                                🌱 Sustainable Activity
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label>Amount / Description</label>
+
+                        <input
+                            type="text"
+                            id="activityAmount"
+                            placeholder="Example: 3 km"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <button class="btn" type="submit">
+                    ➕ Save Activity
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <div class="panel">
+
+            <h2>📋 Activity History</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>Description</th>
+                        <th>Points</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody id="activityTable">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= CHALLENGES ================= -->
+
+    <section id="challenges" class="section">
+
+        <div class="panel">
+
+            <h2>🎯 Sustainability Challenges</h2>
+
+            <div class="challenge">
+
+                <h3>🧴 Plastic-Free Week</h3>
+
+                <p>
+                    Avoid single-use plastic for 7 days.
+                </p>
+
+                <div class="progress" style="margin-top:10px;">
+                    <div class="progress-bar" style="width:70%"></div>
+                </div>
+
+                <small>5 / 7 days completed</small>
+
+            </div>
+
+
+            <div class="challenge">
+
+                <h3>🚶 Walking Challenge</h3>
+
+                <p>
+                    Walk at least 3 km for 5 days.
+                </p>
+
+                <div class="progress" style="margin-top:10px;">
+                    <div class="progress-bar" style="width:60%"></div>
+                </div>
+
+                <small>3 / 5 days completed</small>
+
+            </div>
+
+
+            <div class="challenge">
+
+                <h3>♻️ Recycling Challenge</h3>
+
+                <p>
+                    Recycle materials for 10 days.
+                </p>
+
+                <div class="progress" style="margin-top:10px;">
+                    <div class="progress-bar" style="width:80%"></div>
+                </div>
+
+                <small>8 / 10 days completed</small>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= ACHIEVEMENTS ================= -->
+
+    <section id="achievements" class="section">
+
+        <div class="panel">
+
+            <h2>🏆 Achievements</h2>
+
+            <div class="badges">
+
+                <div class="badge">
+                    <span>🌱</span>
+                    <strong>First Step</strong>
+                    <p>First sustainability activity</p>
+                </div>
+
+                <div class="badge">
+                    <span>♻️</span>
+                    <strong>Recycler</strong>
+                    <p>Completed recycling activities</p>
+                </div>
+
+                <div class="badge">
+                    <span>🚶</span>
+                    <strong>Green Walker</strong>
+                    <p>Completed walking challenge</p>
+                </div>
+
+                <div class="badge">
+                    <span>🧴</span>
+                    <strong>Plastic Reducer</strong>
+                    <p>Reduced plastic usage</p>
+                </div>
+
+                <div class="badge">
+                    <span>🌍</span>
+                    <strong>Eco Hero</strong>
+                    <p>Reached Eco Score 80+</p>
+                </div>
+
+                <div class="badge">
+                    <span>🏆</span>
+                    <strong>Eco Champion</strong>
+                    <p>Earned 500 Eco Points</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= LEADERBOARD ================= -->
+
+    <section id="leaderboard" class="section">
+
+        <div class="panel">
+
+            <h2>🥇 Campus Leaderboard</h2>
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Student</th>
+                        <th>Eco Points</th>
+                        <th>Eco Score</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr>
+                        <td>🥇 1</td>
+                        <td>Student A</td>
+                        <td>920</td>
+                        <td>95</td>
+                    </tr>
+
+                    <tr>
+                        <td>🥈 2</td>
+                        <td>Student B</td>
+                        <td>875</td>
+                        <td>91</td>
+                    </tr>
+
+                    <tr>
+                        <td>🥉 3</td>
+                        <td>Student C</td>
+                        <td>810</td>
+                        <td>88</td>
+                    </tr>
+
+                    <tr>
+                        <td>4</td>
+                        <td>Eco User</td>
+                        <td id="leaderPoints">120</td>
+                        <td id="leaderScore">75</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- ================= PROFILE ================= -->
+
+    <section id="profile" class="section">
+
+        <div class="panel profile-card">
+
+            <h2>👤 User Profile</h2>
+
+            <div class="profile-row">
+                <strong>Name</strong>
+                <span id="profileName">Eco User</span>
+            </div>
+
+            <div class="profile-row">
+                <strong>Email</strong>
+                <span id="profileEmail">ecouser@example.com</span>
+            </div>
+
+            <div class="profile-row">
+                <strong>User Type</strong>
+                <span>Student</span>
+            </div>
+
+            <div class="profile-row">
+                <strong>Eco Points</strong>
+                <span id="profilePoints">120</span>
+            </div>
+
+            <div class="profile-row">
+                <strong>Eco Score</strong>
+                <span id="profileScore">75 / 100</span>
+            </div>
+
+            <button class="btn" onclick="editProfile()">
+                ✏️ Edit Profile
+            </button>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+
+    /* ================= DATA ================= */
+
+    let ecoPoints = Number(localStorage.getItem("ecoPoints")) || 120;
+    let ecoScore = Number(localStorage.getItem("ecoScore")) || 75;
+
+    let activities =
+        JSON.parse(localStorage.getItem("activities")) || [];
+
+
+    /* ================= NAVIGATION ================= */
+
+    const navButtons = document.querySelectorAll(".nav-btn");
+
+    const sections = document.querySelectorAll(".section");
+
+    navButtons.forEach(button => {
+
+        button.addEventListener("click", function () {
+
+            const sectionId = this.dataset.section;
+
+            navButtons.forEach(btn =>
+                btn.classList.remove("active")
+            );
+
+            this.classList.add("active");
+
+            sections.forEach(section =>
+                section.classList.remove("active")
+            );
+
+            document
+                .getElementById(sectionId)
+                .classList.add("active");
+
+            const titles = {
+
+                dashboard: "EcoTrack Dashboard",
+
+                activity: "Add Sustainability Activity",
+
+                challenges: "Eco Challenges",
+
+                achievements: "Achievements",
+
+                leaderboard: "Campus Leaderboard",
+
+                profile: "User Profile"
+
+            };
+
+            document.getElementById("pageTitle").textContent =
+                titles[sectionId];
+
+        });
+
+    });
+
+
+    /* ================= POINT SYSTEM ================= */
+
+    function getPoints(activity) {
+
+        const points = {
+
+            Recycling: 10,
+
+            Plastic: 5,
+
+            Food: 7,
+
+            Transport: 6,
+
+            Walking: 8,
+
+            Sustainable: 10
+
+        };
+
+        return points[activity] || 5;
+    }
+
+
+  
+    
+/* ================= ADD ACTIVITY ================= */
+
+document
+    .getElementById("activityForm")
+    .addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const type = document.getElementById("activityType").value;
+        const amount = document.getElementById("activityAmount").value.trim();
+
+        if (!type || !amount) {
+            alert("Please fill in all fields.");
+            return;
+        }
+
+        try {
+            const response = await fetch("http://127.0.0.1:5000/api/activities", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    activity_type: type,
+                    description: amount
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                alert(result.error || "Could not save activity.");
+                return;
+            }
+
+            alert("Activity saved successfully!");
+
+            this.reset();
+
+            await loadBackendData();
+
+        } catch (error) {
+            console.error("Backend connection error:", error);
+            alert("Could not connect to EcoTrack backend. Please check that Flask is running.");
+        }
+    });
+
+/* ================= LOAD BACKEND DATA ================= */
+
+async function loadBackendData() {
+    try {
+        const [dashboardResponse, activitiesResponse] =
+            await Promise.all([
+                fetch("http://127.0.0.1:5000/api/dashboard"),
+                fetch("http://127.0.0.1:5000/api/activities")
+            ]);
+
+        if (!dashboardResponse.ok || !activitiesResponse.ok) {
+            throw new Error("Could not load EcoTrack data.");
+        }
+
+        const dashboard = await dashboardResponse.json();
+        const data = await activitiesResponse.json();
+
+        // Use the real database values
+        ecoPoints = dashboard.total_eco_points;
+        ecoScore = dashboard.eco_score;
+
+        activities = data.activities.map(item => ({
+            type: item.activity_type,
+            amount: item.description,
+            points: item.points,
+            date: item.created_at
+                ? new Date(item.created_at).toLocaleDateString()
+                : ""
+        }));
+
+        // Refresh the existing dashboard
+        updateDashboard();
+        updateActivityTable();
+        updateRecentActivities();
+
+        // Keep the browser's cached values in sync
+        localStorage.setItem("ecoPoints", ecoPoints);
+        localStorage.setItem("ecoScore", ecoScore);
+        localStorage.setItem("activities", JSON.stringify(activities));
+
+    } catch (error) {
+        console.error("Could not load backend data:", error);
+        alert("Could not load EcoTrack data. Check that Flask is running.");
+    }
+}
+
+    /* ================= DASHBOARD UPDATE ================= */
+
+    function updateDashboard() {
+
+        document.getElementById("ecoPoints").textContent =
+            ecoPoints;
+
+        document.getElementById("ecoScore").textContent =
+            ecoScore;
+
+        document.getElementById("scoreCircle").textContent =
+            ecoScore;
+
+        document.getElementById("activityCount").textContent =
+            activities.length;
+
+        document.getElementById("profilePoints").textContent =
+            ecoPoints;
+
+        document.getElementById("profileScore").textContent =
+            ecoScore + " / 100";
+
+        document.getElementById("leaderPoints").textContent =
+            ecoPoints;
+
+        document.getElementById("leaderScore").textContent =
+            ecoScore;
+
+    }
+
+
+    /* ================= ACTIVITY TABLE ================= */
+
+    function updateActivityTable() {
+
+        const table =
+            document.getElementById("activityTable");
+
+        table.innerHTML = "";
+
+        if (activities.length === 0) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="4">
+                        No activities recorded yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+
+        activities
+            .slice()
+            .reverse()
+            .forEach(activity => {
+
+                const row =
+                    document.createElement("tr");
+
+                row.innerHTML = `
+
+                    <td>${getActivityIcon(activity.type)}
+                        ${activity.type}
+                    </td>
+
+                    <td>${escapeHTML(activity.amount)}</td>
+
+                    <td>
+                        <strong style="color:#2e7d32;">
+                            +${activity.points}
+                        </strong>
+                    </td>
+
+                    <td>${activity.date}</td>
+
+                `;
+
+                table.appendChild(row);
+
+            });
+
+    }
+
+
+    /* ================= RECENT ACTIVITIES ================= */
+
+    function updateRecentActivities() {
+
+        const container =
+            document.getElementById("recentActivities");
+
+        if (activities.length === 0) {
+
+            return;
+
+        }
+
+        container.innerHTML = "";
+
+        activities
+            .slice(-5)
+            .reverse()
+            .forEach(activity => {
+
+                const div =
+                    document.createElement("div");
+
+                div.className = "activity";
+
+                div.innerHTML = `
+
+                    <div class="activity-name">
+
+                        ${getActivityIcon(activity.type)}
+
+                        <span>
+                            ${escapeHTML(activity.type)}
+                            - ${escapeHTML(activity.amount)}
+                        </span>
+
+                    </div>
+
+                    <span class="points">
+                        +${activity.points} pts
+                    </span>
+
+                `;
+
+                container.appendChild(div);
+
+            });
+
+    }
+
+
+    /* ================= ICON ================= */
+
+    function getActivityIcon(type) {
+
+        const icons = {
+
+            Recycling: "♻️",
+
+            Plastic: "🧴",
+
+            Food: "🍱",
+
+            Transport: "🚌",
+
+            Walking: "🚶",
+
+            Sustainable: "🌱"
+
+        };
+
+        return icons[type] || "🌱";
+
+    }
+
+
+    /* ================= SECURITY ================= */
+
+    function escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+
+    }
+
+
+    /* ================= PROFILE ================= */
+
+    function editProfile() {
+
+        const name =
+            prompt(
+                "Enter your name:",
+                document.getElementById("profileName").textContent
+            );
+
+        if (!name || name.trim() === "") {
+
+            return;
+
+        }
+
+        const cleanName = name.trim();
+
+        document.getElementById("profileName").textContent =
+            cleanName;
+
+        document.getElementById("topUserName").textContent =
+            cleanName;
+
+        localStorage.setItem(
+            "userName",
+            cleanName
+        );
+
+    }
+
+
+    /* ================= LOAD USER ================= */
+
+    function loadUser() {
+
+        const savedName =
+            localStorage.getItem("userName");
+
+        if (savedName) {
+
+            document.getElementById("profileName").textContent =
+                savedName;
+
+            document.getElementById("topUserName").textContent =
+                savedName;
+
+        }
+
+    }
+
+
+    /* ================= INITIALIZE ================= */
+
+    loadUser();
+
+    updateDashboard();
+
+    updateActivityTable();
+
+    updateRecentActivities();
+
+    loadBackendData();
+
+/* =============== LOGIN & REGISTRATION =============== */
+
+const authScreen = document.getElementById("authScreen");
+const appShell = document.getElementById("appShell");
+
+document.getElementById("showLogin").addEventListener("click", function () {
+    document.getElementById("loginForm").style.display = "block";
+    document.getElementById("registerForm").style.display = "none";
+    document.getElementById("authMessage").textContent = "";
+});
+
+document.getElementById("showRegister").addEventListener("click", function () {
+    document.getElementById("loginForm").style.display = "none";
+    document.getElementById("registerForm").style.display = "block";
+    document.getElementById("authMessage").textContent = "";
+});
+
+function openDashboard(user) {
+    authScreen.style.display = "none";
+    appShell.style.display = "block";
+
+    document.getElementById("topUserName").textContent = user.full_name;
+    document.getElementById("profileName").textContent = user.full_name;
+    document.getElementById("profileEmail").textContent = user.email;
+
+    localStorage.setItem("userName", user.full_name);
+    loadBackendData();
+}
+
+document.getElementById("registerForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const message = document.getElementById("authMessage");
+    message.textContent = "Creating your account...";
+
+    const user = {
+        full_name: document.getElementById("registerName").value.trim(),
+        email: document.getElementById("registerEmail").value.trim(),
+        contact_number: document.getElementById("registerContact").value.trim(),
+        password: document.getElementById("registerPassword").value
+    };
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            message.textContent = result.error || "Registration failed.";
+            return;
+        }
+
+        message.textContent = "Account created! Logging you in...";
+
+        // Register first, then authenticate using the new account.
+        const loginResponse = await fetch("http://127.0.0.1:5000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                email: user.email,
+                password: user.password
+            })
+        });
+
+        const loginResult = await loginResponse.json();
+
+        if (!loginResponse.ok) {
+            message.textContent = "Account created. Please log in.";
+            document.getElementById("loginEmail").value = user.email;
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("registerForm").style.display = "none";
+            return;
+        }
+
+        openDashboard({
+            full_name: loginResult.user.full_name,
+            email: loginResult.user.email
+        });
+
+    } catch (error) {
+        console.error(error);
+        message.textContent = "Cannot connect to the backend. Make sure Flask is running.";
+    }
+});
+
+document.getElementById("loginForm").addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    const message = document.getElementById("authMessage");
+    message.textContent = "Checking your login...";
+
+    const credentials = {
+        email: document.getElementById("loginEmail").value.trim(),
+        password: document.getElementById("loginPassword").value
+    };
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(credentials)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            message.textContent = result.error || "Invalid email or password.";
+            return;
+        }
+
+        openDashboard({
+            full_name: result.user.full_name,
+            email: result.user.email
+        });
+
+    } catch (error) {
+        console.error(error);
+        message.textContent = "Cannot connect to the backend. Make sure Flask is running.";
+    }
+});
+
+</script>
+
+</body>
+</html>
