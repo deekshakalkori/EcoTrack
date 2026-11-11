@@ -1,1579 +1,776 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcoTrack - Sustainability Dashboard</title>
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: Arial, sans-serif;
-        }
-
-        body {
-            background: #f1f8f4;
-            color: #26382d;
-        }
-
-        /* SIDEBAR */
-        .sidebar {
-            width: 240px;
-            height: 100vh;
-            position: fixed;
-            left: 0;
-            top: 0;
-            background: #14532d;
-            color: white;
-            padding: 25px 15px;
-        }
-
-        .logo {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .logo h2 {
-            font-size: 25px;
-        }
-
-        .logo p {
-            font-size: 12px;
-            margin-top: 5px;
-            color: #c8e6c9;
-        }
-
-        .menu {
-            list-style: none;
-        }
-
-        .menu li {
-            margin: 8px 0;
-        }
-
-        .menu button {
-            width: 100%;
-            border: none;
-            background: transparent;
-            color: white;
-            padding: 13px;
-            text-align: left;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 15px;
-        }
-
-        .menu button:hover,
-        .menu button.active {
-            background: #2e7d32;
-        }
-
-        /* MAIN */
-        .main {
-            margin-left: 240px;
-            padding: 25px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-
-        .topbar h1 {
-            color: #14532d;
-        }
-
-        .user-mini {
-            background: white;
-            padding: 10px 18px;
-            border-radius: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-        }
-
-        /* SECTIONS */
-        .section {
-            display: none;
-        }
-
-        .section.active {
-            display: block;
-        }
-
-        /* CARDS */
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 25px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 14px;
-            padding: 22px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-        }
-
-        .card h3 {
-            font-size: 14px;
-            color: #607d68;
-            margin-bottom: 12px;
-        }
-
-        .card .number {
-            font-size: 30px;
-            font-weight: bold;
-            color: #14532d;
-        }
-
-        .icon {
-            font-size: 28px;
-            margin-bottom: 10px;
-        }
-
-        /* CONTENT GRID */
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 20px;
-        }
-
-        .panel {
-            background: white;
-            padding: 22px;
-            border-radius: 14px;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.07);
-            margin-bottom: 20px;
-        }
-
-        .panel h2 {
-            margin-bottom: 18px;
-            color: #14532d;
-        }
-
-        /* PROGRESS */
-        .progress-box {
-            margin: 15px 0;
-        }
-
-        .progress-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .progress {
-            height: 10px;
-            background: #e0e8e2;
-            border-radius: 20px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: #43a047;
-            border-radius: 20px;
-        }
-
-        /* ACTIVITIES */
-        .activity {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 13px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .activity:last-child {
-            border-bottom: none;
-        }
-
-        .activity-name {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .points {
-            color: #2e7d32;
-            font-weight: bold;
-        }
-
-        /* FORM */
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-group label {
-            margin-bottom: 6px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        input,
-        select {
-            padding: 12px;
-            border: 1px solid #ccd8cf;
-            border-radius: 7px;
-            outline: none;
-        }
-
-        input:focus,
-        select:focus {
-            border-color: #2e7d32;
-        }
-
-        .btn {
-            border: none;
-            background: #2e7d32;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 7px;
-            cursor: pointer;
-            margin-top: 15px;
-        }
-
-        .btn:hover {
-            background: #1b5e20;
-        }
-
-        /* SCORE */
-        .score-circle {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            margin: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border: 12px solid #66bb6a;
-            background: #f8fff9;
-        }
-
-        .score-circle strong {
-            font-size: 38px;
-            color: #14532d;
-        }
-
-        .score-circle span {
-            font-size: 13px;
-        }
-
-        /* CHALLENGES */
-        .challenge {
-            border: 1px solid #d8e5db;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-        }
-
-        .challenge h3 {
-            margin-bottom: 7px;
-        }
-
-        .challenge p {
-            font-size: 13px;
-            color: #607d68;
-        }
-
-        /* ACHIEVEMENTS */
-        .badges {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .badge {
-            text-align: center;
-            padding: 15px;
-            background: #f1f8f4;
-            border-radius: 10px;
-        }
-
-        .badge span {
-            font-size: 32px;
-            display: block;
-            margin-bottom: 8px;
-        }
-
-        .badge p {
-            font-size: 12px;
-        }
-
-        /* SUGGESTION */
-        .suggestion {
-            background: #e8f5e9;
-            border-left: 5px solid #43a047;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-        }
-
-        /* PROFILE */
-        .profile-card {
-            max-width: 650px;
-        }
-
-        .profile-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px 0;
-            border-bottom: 1px solid #eee;
-        }
-
-        .profile-row:last-child {
-            border-bottom: none;
-        }
-
-        /* TABLE */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            padding: 13px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        th {
-            color: #14532d;
-        }
-
-        /* RESPONSIVE */
-        @media (max-width: 1000px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 700px) {
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-
-            .main {
-                margin-left: 0;
-            }
-
-            .menu {
-                display: flex;
-                overflow-x: auto;
-            }
-
-            .menu li {
-                min-width: 130px;
-            }
-
-            .cards {
-                grid-template-columns: 1fr;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .badges {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EcoTrack - Sustainability Dashboard</title>
+<style>
+:root{--ink:#1f3326;--muted:#5f7566;--deep:#14532d;--leaf:#2e7d32;--mint:#e8f5e9;--line:#dbe6dd;--bg:#f1f8f4;--gold:#f2b134;--bad:#b3261e}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.45}
+button,input,select{font:inherit}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+[hidden]{display:none!important}
+
+/* auth */
+#authScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:var(--mint)}
+.auth-box{background:#fff;width:100%;max-width:430px;padding:34px;border-radius:16px;border:1px solid var(--line)}
+.auth-box h1{color:var(--deep);text-align:center}
+.tagline{text-align:center;color:var(--muted);margin:6px 0 22px}
+.tabs{display:flex;gap:8px;margin-bottom:20px}
+.tab{flex:1;padding:10px;border:1px solid var(--line);background:#fff;border-radius:8px;cursor:pointer;color:var(--deep)}
+.tab.on{background:var(--leaf);border-color:var(--leaf);color:#fff}
+#authMessage{margin-top:14px;text-align:center;min-height:22px}
+
+/* shell */
+.sidebar{width:230px;height:100vh;position:fixed;left:0;top:0;background:var(--deep);color:#fff;padding:24px 14px;display:flex;flex-direction:column}
+.logo{text-align:center;margin-bottom:26px}
+.logo p{font-size:12px;color:#c8e6c9;margin-top:4px}
+.menu{list-style:none;flex:1}
+.menu li{margin:6px 0}
+.menu button,.logout{width:100%;border:0;background:transparent;color:#fff;padding:12px;text-align:left;border-radius:8px;cursor:pointer}
+.menu button:hover,.menu button.on,.logout:hover{background:var(--leaf)}
+.logout{border:1px solid rgba(255,255,255,.3);text-align:center}
+.main{margin-left:230px;padding:26px}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:22px}
+.topbar h1{color:var(--deep)}
+.topbar p{color:var(--muted)}
+.me{background:#fff;border:1px solid var(--line);padding:9px 16px;border-radius:20px;white-space:nowrap}
+.section{display:none}
+.section.on{display:block}
+
+/* blocks */
+.panel{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px;margin-bottom:20px}
+.panel h2{color:var(--deep);margin-bottom:14px;font-size:19px}
+.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px}
+.stat h3{font-size:13px;font-weight:600;color:var(--muted)}
+.stat .n{font-size:30px;font-weight:700;color:var(--deep);margin:6px 0 2px}
+.stat small{color:var(--muted)}
+.grid2{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+.empty{color:var(--muted);padding:8px 0}
+
+/* weekly reward hero */
+.hero{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;background:var(--deep);color:#fff;border-radius:14px;padding:24px 28px;margin-bottom:20px}
+.hero .trophy{font-size:56px;line-height:1}
+.hero h2{font-size:22px;margin-bottom:4px}
+.hero p{color:#cfe8d2}
+.hero .lead{margin-top:8px;font-weight:600;color:#fff}
+.timer{text-align:center;background:rgba(255,255,255,.12);border-radius:12px;padding:12px 18px}
+.timer strong{display:block;font-size:24px;color:var(--gold)}
+.timer span{font-size:12px;color:#cfe8d2}
+
+/* progress, activity rows */
+.bar-row{margin:13px 0}
+.bar-top{display:flex;justify-content:space-between;font-size:14px;margin-bottom:5px}
+.bar{height:10px;background:#e0e8e2;border-radius:20px;overflow:hidden}
+.bar i{display:block;height:100%;background:#43a047;border-radius:20px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
+.row:last-child{border-bottom:0}
+.pts{color:var(--leaf);font-weight:700;white-space:nowrap}
+.ring{width:150px;height:150px;border-radius:50%;margin:auto;display:grid;place-items:center;background:conic-gradient(var(--leaf) calc(var(--p)*1%),#dfe8e1 0)}
+.ring div{width:118px;height:118px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.ring strong{font-size:36px;color:var(--deep);line-height:1}
+.tip{background:var(--mint);border-left:5px solid #43a047;padding:12px 14px;border-radius:8px;margin-bottom:10px}
+.tip b{display:block}
+
+/* forms */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.fg{display:flex;flex-direction:column;margin-bottom:14px}
+.form-grid .fg{margin-bottom:0}
+label{font-weight:600;font-size:14px;margin-bottom:6px}
+input,select{padding:12px;border:1px solid #c5d3c8;border-radius:7px;background:#fff}
+.btn{border:0;background:var(--leaf);color:#fff;padding:12px 20px;border-radius:7px;cursor:pointer;margin-top:14px}
+.btn:hover{background:#1b5e20}
+.btn.small{padding:8px 14px;margin:0}
+.btn:disabled{opacity:.6;cursor:wait}
+.wide{width:100%}
+
+/* tables, challenges, badges */
+table{width:100%;border-collapse:collapse}
+th,td{padding:12px;text-align:left;border-bottom:1px solid #eee}
+th{color:var(--deep)}
+tr.you td{background:var(--mint);font-weight:600}
+.table-wrap{overflow-x:auto}
+.challenge{display:flex;justify-content:space-between;align-items:center;gap:14px;border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:12px}
+.challenge p{font-size:13px;color:var(--muted)}
+.done{color:var(--leaf);font-weight:700}
+.prow{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid #eee}
+.prow:last-of-type{border-bottom:0}
+
+/* streak */
+.streak{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.streak-n{font-size:34px;font-weight:700;color:var(--deep)}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.sb{text-align:center;padding:14px;border-radius:10px;background:var(--mint)}
+.sb span{font-size:32px;display:block}
+.sb small{color:var(--muted)}
+.sb.locked{opacity:.45;filter:grayscale(1)}
+
+/* certificate and badge */
+.badge{display:inline-block;background:var(--mint);border:1px solid #b9d9bd;color:var(--deep);padding:8px 14px;border-radius:20px;font-weight:600}
+#certModal{position:fixed;inset:0;background:rgba(20,40,28,.72);display:flex;align-items:center;justify-content:center;padding:16px;z-index:8;overflow:auto}
+.cert-wrap{width:100%;max-width:760px}
+#cert{background:#fff;border:10px double var(--deep);padding:42px 28px;text-align:center;font-family:Georgia,"Times New Roman",serif}
+#cert .big{font-size:34px;color:var(--deep);margin:10px 0}
+#cert .who{font-size:30px;display:inline-block;border-bottom:2px solid var(--gold);padding:0 26px 4px;margin:14px 0}
+#cert p{margin:8px 0}
+.cert-actions{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.btn.light{background:#fff;color:var(--deep);border:1px solid var(--line)}
+@media print{
+@page{size:landscape;margin:12mm}
+body *{visibility:hidden}
+#certModal,#cert,#cert *{visibility:visible}
+#certModal{position:absolute;inset:0;background:#fff;display:block;padding:0}
+.cert-actions{display:none!important}
+.cert-wrap{max-width:none}
+}
+
+/* toast */
+#toast{position:fixed;bottom:22px;left:50%;transform:translate(-50%,20px);background:var(--deep);color:#fff;padding:12px 20px;border-radius:8px;opacity:0;pointer-events:none;transition:.25s;z-index:9}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.bad{background:var(--bad)}
+@media (prefers-reduced-motion:reduce){#toast{transition:none}}
+
+@media (max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+@media (max-width:700px){
+.sidebar{width:100%;height:auto;position:relative;padding:14px}
+.logo{margin-bottom:10px}
+.menu{display:flex;overflow-x:auto;gap:4px;flex:none}
+.menu li{min-width:120px;margin:0}
+.logout{margin-top:8px}
+.main{margin-left:0;padding:16px}
+.cards,.form-grid{grid-template-columns:1fr}
+.hero{grid-template-columns:1fr;text-align:center}
+.challenge{flex-direction:column;align-items:flex-start}
+.badges{grid-template-columns:1fr}
+}
+</style>
 </head>
-
-
 <body>
 
-<!-- LOGIN AND CREATE ACCOUNT -->
-<div id="authScreen" style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; background:linear-gradient(135deg,#e8f5e9,#e3f2fd);">
-
-    <div style="background:white; width:100%; max-width:440px; padding:35px; border-radius:18px; box-shadow:0 10px 35px rgba(0,0,0,0.10);">
-
-        <div style="text-align:center; margin-bottom:25px;">
-            <h1 style="color:#14532d;">🌱 EcoTrack</h1>
-            <p style="margin-top:8px; color:#607d68;">Small habits. Bigger impact.</p>
-        </div>
-
-        <div style="display:flex; gap:10px; margin-bottom:25px;">
-            <button id="showLogin" type="button" class="btn" style="flex:1; margin:0;">Login</button>
-            <button id="showRegister" type="button" class="btn" style="flex:1; margin:0; background:#e8f5e9; color:#14532d;">Create Account</button>
-        </div>
-
-        <form id="loginForm">
-            <h2 style="color:#14532d; margin-bottom:18px;">Welcome Back!</h2>
-
-            <div class="form-group" style="margin-bottom:15px;">
-                <label for="loginEmail">Email Address</label>
-                <input id="loginEmail" type="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="form-group" style="margin-bottom:15px;">
-                <label for="loginPassword">Password</label>
-                <input id="loginPassword" type="password" placeholder="Enter your password" required>
-            </div>
-
-            <button type="submit" class="btn" style="width:100%;">Login to EcoTrack</button>
-        </form>
-
-        <form id="registerForm" style="display:none;">
-            <h2 style="color:#14532d; margin-bottom:18px;">Start Your Journey!</h2>
-
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="registerName">Full Name</label>
-                <input id="registerName" type="text" placeholder="Enter your full name" required>
-            </div>
-
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="registerEmail">Email Address</label>
-                <input id="registerEmail" type="email" placeholder="Enter your email" required>
-            </div>
-
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="registerContact">Contact Number</label>
-                <input id="registerContact" type="tel" placeholder="Enter your contact number" required>
-            </div>
-
-            <div class="form-group" style="margin-bottom:12px;">
-                <label for="registerPassword">Password (minimum 8 characters)</label>
-                <input id="registerPassword" type="password" minlength="8" placeholder="Create a password" required>
-            </div>
-
-            <button type="submit" class="btn" style="width:100%;">Create Account</button>
-        </form>
-
-        <p id="authMessage" role="status" style="margin-top:15px; text-align:center;"></p>
+<!-- ============ LOGIN / REGISTER ============ -->
+<div id="authScreen">
+  <div class="auth-box">
+    <h1>🌱 EcoTrack</h1>
+    <p class="tagline">Small habits. Bigger impact.</p>
+    <div class="tabs">
+      <button id="showLogin" type="button" class="tab on">Log in</button>
+      <button id="showRegister" type="button" class="tab">Create account</button>
     </div>
+
+    <form id="loginForm">
+      <div class="fg"><label for="loginEmail">Email address</label>
+        <input id="loginEmail" type="email" autocomplete="email" required></div>
+      <div class="fg"><label for="loginPassword">Password</label>
+        <input id="loginPassword" type="password" autocomplete="current-password" required></div>
+      <button type="submit" class="btn wide">Log in</button>
+    </form>
+
+    <form id="registerForm" hidden>
+      <div class="fg"><label for="registerName">Full name</label>
+        <input id="registerName" type="text" autocomplete="name" required></div>
+      <div class="fg"><label for="registerEmail">Email address</label>
+        <input id="registerEmail" type="email" autocomplete="email" required></div>
+      <div class="fg"><label for="registerContact">Contact number</label>
+        <input id="registerContact" type="tel" autocomplete="tel" required></div>
+      <div class="fg"><label for="registerPassword">Password (8 characters or more)</label>
+        <input id="registerPassword" type="password" minlength="8" autocomplete="new-password" required></div>
+      <button type="submit" class="btn wide">Create account</button>
+    </form>
+    <p id="authMessage" role="status"></p>
+  </div>
 </div>
 
-<!-- DASHBOARD: SHOW AFTER LOGIN -->
-<div id="appShell" style="display:none;">
-
-<!-- SIDEBAR -->
-
+<!-- ============ APP ============ -->
+<div id="appShell" hidden>
 <aside class="sidebar">
-
-    <div class="logo">
-        <h2>🌱 EcoTrack</h2>
-        <p>Sustainability Management</p>
-    </div>
-
-    <ul class="menu">
-        <li>
-            <button class="nav-btn active" data-section="dashboard">
-                📊 Dashboard
-            </button>
-        </li>
-
-        <li>
-            <button class="nav-btn" data-section="activity">
-                📝 Add Activity
-            </button>
-        </li>
-
-        <li>
-            <button class="nav-btn" data-section="challenges">
-                🎯 Challenges
-            </button>
-        </li>
-
-        <li>
-            <button class="nav-btn" data-section="achievements">
-                🏆 Achievements
-            </button>
-        </li>
-
-        <li>
-            <button class="nav-btn" data-section="leaderboard">
-                🥇 Leaderboard
-            </button>
-        </li>
-
-        <li>
-            <button class="nav-btn" data-section="profile">
-                👤 Profile
-            </button>
-        </li>
-    </ul>
-
+  <div class="logo"><h2>🌱 EcoTrack</h2><p>Sustainability tracker</p></div>
+  <ul class="menu">
+    <li><button class="nav on" data-section="dashboard">📊 Dashboard</button></li>
+    <li><button class="nav" data-section="activity">📝 Add activity</button></li>
+    <li><button class="nav" data-section="challenges">🎯 Challenges</button></li>
+    <li><button class="nav" data-section="rewards">🎁 Rewards</button></li>
+    <li><button class="nav" data-section="leaderboard">🥇 Leaderboard</button></li>
+    <li><button class="nav" data-section="profile">👤 Profile</button></li>
+  </ul>
+  <button class="logout" id="logoutBtn">Log out</button>
 </aside>
 
-
-<!-- MAIN -->
 <main class="main">
+  <div class="topbar">
+    <div><h1 id="pageTitle">Dashboard</h1><p>Track your journey toward a sustainable future 🌍</p></div>
+    <div class="me">👤 <span id="topUserName"></span></div>
+  </div>
 
-    <!-- TOP BAR -->
-    <div class="topbar">
-        <div>
-            <h1 id="pageTitle">EcoTrack Dashboard</h1>
-            <p>Track your journey towards a sustainable future 🌍</p>
-        </div>
-
-        <div class="user-mini">
-            👤 <span id="topUserName">Eco User</span>
-        </div>
+  <!-- DASHBOARD -->
+  <section id="dashboard" class="section on">
+    <div class="hero">
+      <div class="trophy" id="heroIcon">🏆</div>
+      <div>
+        <h2 id="heroTitle">Weekly reward</h2>
+        <p id="heroDesc"></p>
+        <p class="lead" id="heroLead"></p>
+      </div>
+      <div class="timer"><strong id="heroTimer">--</strong><span>until this week ends</span></div>
     </div>
 
+    <div class="panel streak">
+      <div><span class="streak-n">🔥 <span id="streakNum">0</span></span> <strong>day streak</strong></div>
+      <p id="streakMsg"></p>
+    </div>
 
-    <!-- ================= DASHBOARD ================= -->
+    <div class="cards">
+      <div class="stat"><h3>🌱 Eco score</h3><div class="n" id="ecoScore">0</div><small>out of 100</small></div>
+      <div class="stat"><h3>🏆 Eco points</h3><div class="n" id="ecoPoints">0</div><small>activities + challenges</small></div>
+      <div class="stat"><h3>♻️ Activities</h3><div class="n" id="activityCount">0</div><small>logged so far</small></div>
+      <div class="stat"><h3>🌍 CO₂ saved</h3><div class="n"><span id="co2">0</span> kg</div><small>estimated</small></div>
+    </div>
 
-    <section id="dashboard" class="section active">
-
-        <div class="cards">
-
-            <div class="card">
-                <div class="icon">🌱</div>
-                <h3>Current Eco Score</h3>
-                <div class="number" id="ecoScore">75</div>
-                <small>Out of 100</small>
-            </div>
-
-            <div class="card">
-                <div class="icon">🏆</div>
-                <h3>Total Eco Points</h3>
-                <div class="number" id="ecoPoints">120</div>
-                <small>Points earned</small>
-            </div>
-
-            <div class="card">
-                <div class="icon">♻️</div>
-                <h3>Activities</h3>
-                <div class="number" id="activityCount">0</div>
-                <small>Total activities</small>
-            </div>
-
-            <div class="card">
-                <div class="icon">🎯</div>
-                <h3>Challenges</h3>
-                <div class="number">3</div>
-                <small>Active challenges</small>
-            </div>
-
+    <div class="grid2">
+      <div>
+        <div class="panel"><h2>Your activity mix</h2><div id="mix"></div></div>
+        <div class="panel"><h2>Recent activities</h2><div id="recent"></div></div>
+      </div>
+      <div>
+        <div class="panel"><h2>Eco score</h2>
+          <div class="ring" id="ring" style="--p:0"><div><strong id="ringNum">0</strong><span>/ 100</span></div></div>
         </div>
+        <div class="panel"><h2>Suggestions</h2><div id="tips"></div></div>
+      </div>
+    </div>
+  </section>
 
-
-        <div class="content-grid">
-
-            <!-- LEFT -->
-            <div>
-
-                <div class="panel">
-                    <h2>📈 Weekly Progress</h2>
-
-                    <div class="progress-box">
-                        <div class="progress-label">
-                            <span>♻️ Recycling</span>
-                            <span>80%</span>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" style="width:80%"></div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-label">
-                            <span>🚶 Walking</span>
-                            <span>65%</span>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" style="width:65%"></div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-label">
-                            <span>🚌 Public Transport</span>
-                            <span>70%</span>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" style="width:70%"></div>
-                        </div>
-                    </div>
-
-                    <div class="progress-box">
-                        <div class="progress-label">
-                            <span>🧴 Plastic Reduction</span>
-                            <span>55%</span>
-                        </div>
-
-                        <div class="progress">
-                            <div class="progress-bar" style="width:55%"></div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <h2>📝 Recent Activities</h2>
-
-                    <div id="recentActivities">
-
-                        <div class="activity">
-                            <div class="activity-name">
-                                ♻️
-                                <span>Recycled materials</span>
-                            </div>
-
-                            <span class="points">+10 pts</span>
-                        </div>
-
-                        <div class="activity">
-                            <div class="activity-name">
-                                🚶
-                                <span>Walked 3 km</span>
-                            </div>
-
-                            <span class="points">+8 pts</span>
-                        </div>
-
-                        <div class="activity">
-                            <div class="activity-name">
-                                🚌
-                                <span>Used public transport</span>
-                            </div>
-
-                            <span class="points">+6 pts</span>
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-
-            <!-- RIGHT -->
-            <div>
-
-                <div class="panel">
-
-                    <h2>🌱 Eco Score</h2>
-
-                    <div class="score-circle">
-                        <strong id="scoreCircle">75</strong>
-                        <span>/ 100</span>
-                    </div>
-
-                    <p style="text-align:center;margin-top:15px;">
-                        Keep making sustainable choices!
-                    </p>
-
-                </div>
-
-
-                <div class="panel">
-
-                    <h2>💡 Suggestions</h2>
-
-                    <div class="suggestion">
-                        🧴 Try reducing single-use plastic bottles.
-                    </div>
-
-                    <div class="suggestion">
-                        🚶 Walk or cycle for short-distance travel.
-                    </div>
-
-                    <div class="suggestion">
-                        ♻️ Continue recycling regularly.
-                    </div>
-
-                </div>
-
-            </div>
-
+  <!-- ADD ACTIVITY -->
+  <section id="activity" class="section">
+    <div class="panel">
+      <h2>Add a daily activity</h2>
+      <form id="activityForm">
+        <div class="form-grid">
+          <div class="fg"><label for="activityType">Activity type</label>
+            <select id="activityType" required>
+              <option value="">Select an activity</option>
+              <option value="Recycling">♻️ Recycling</option>
+              <option value="Plastic Reduction">🧴 Plastic reduction</option>
+              <option value="Food Waste Reduction">🍱 Food waste reduction</option>
+              <option value="Public Transport">🚌 Public transport</option>
+              <option value="Walking">🚶 Walking</option>
+              <option value="Sustainable">🌱 Other sustainable activity</option>
+            </select></div>
+          <div class="fg"><label for="activityAmount">What did you do?</label>
+            <input id="activityAmount" type="text" maxlength="200" placeholder="Example: walked 3 km" required></div>
         </div>
-
-    </section>
-
-
-    <!-- ================= ACTIVITY ================= -->
-
-    <section id="activity" class="section">
-
-        <div class="panel">
-
-            <h2>📝 Add Daily Activity</h2>
-
-            <p style="margin-bottom:20px;">
-                Record your daily sustainable activities.
-            </p>
-
-            <form id="activityForm">
-
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label>Activity Type</label>
-
-                        <select id="activityType" required>
-
-                            <option value="">Select Activity</option>
-
-                            <option value="Recycling">
-                                ♻️ Recycling
-                            </option>
-
-                            <option value="Plastic Reduction">
-                                🧴 Plastic Reduction
-                            </option>
-
-                            <option value="Food Waste Reduction">
-                                🍱 Food Waste Reduction
-                            </option>
-
-                            <option value="Public Transport">
-                                🚌 Public Transportation
-                            </option>
-
-                            <option value="Walking">
-                                🚶 Walking
-                            </option>
-
-                            <option value="Sustainable">
-                                🌱 Sustainable Activity
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>Amount / Description</label>
-
-                        <input
-                            type="text"
-                            id="activityAmount"
-                            placeholder="Example: 3 km"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-                <button class="btn" type="submit">
-                    ➕ Save Activity
-                </button>
-
-            </form>
-
-        </div>
-
-
-        <div class="panel">
-
-            <h2>📋 Activity History</h2>
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Activity</th>
-                        <th>Description</th>
-                        <th>Points</th>
-                        <th>Date</th>
-                    </tr>
-                </thead>
-
-                <tbody id="activityTable">
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= CHALLENGES ================= -->
-
-    <section id="challenges" class="section">
-
-        <div class="panel">
-
-            <h2>🎯 Sustainability Challenges</h2>
-
-            <div class="challenge">
-
-                <h3>🧴 Plastic-Free Week</h3>
-
-                <p>
-                    Avoid single-use plastic for 7 days.
-                </p>
-
-                <div class="progress" style="margin-top:10px;">
-                    <div class="progress-bar" style="width:70%"></div>
-                </div>
-
-                <small>5 / 7 days completed</small>
-
-            </div>
-
-
-            <div class="challenge">
-
-                <h3>🚶 Walking Challenge</h3>
-
-                <p>
-                    Walk at least 3 km for 5 days.
-                </p>
-
-                <div class="progress" style="margin-top:10px;">
-                    <div class="progress-bar" style="width:60%"></div>
-                </div>
-
-                <small>3 / 5 days completed</small>
-
-            </div>
-
-
-            <div class="challenge">
-
-                <h3>♻️ Recycling Challenge</h3>
-
-                <p>
-                    Recycle materials for 10 days.
-                </p>
-
-                <div class="progress" style="margin-top:10px;">
-                    <div class="progress-bar" style="width:80%"></div>
-                </div>
-
-                <small>8 / 10 days completed</small>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= ACHIEVEMENTS ================= -->
-
-    <section id="achievements" class="section">
-
-        <div class="panel">
-
-            <h2>🏆 Achievements</h2>
-
-            <div class="badges">
-
-                <div class="badge">
-                    <span>🌱</span>
-                    <strong>First Step</strong>
-                    <p>First sustainability activity</p>
-                </div>
-
-                <div class="badge">
-                    <span>♻️</span>
-                    <strong>Recycler</strong>
-                    <p>Completed recycling activities</p>
-                </div>
-
-                <div class="badge">
-                    <span>🚶</span>
-                    <strong>Green Walker</strong>
-                    <p>Completed walking challenge</p>
-                </div>
-
-                <div class="badge">
-                    <span>🧴</span>
-                    <strong>Plastic Reducer</strong>
-                    <p>Reduced plastic usage</p>
-                </div>
-
-                <div class="badge">
-                    <span>🌍</span>
-                    <strong>Eco Hero</strong>
-                    <p>Reached Eco Score 80+</p>
-                </div>
-
-                <div class="badge">
-                    <span>🏆</span>
-                    <strong>Eco Champion</strong>
-                    <p>Earned 500 Eco Points</p>
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= LEADERBOARD ================= -->
-
-    <section id="leaderboard" class="section">
-
-        <div class="panel">
-
-            <h2>🥇 Campus Leaderboard</h2>
-
-            <table>
-
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Student</th>
-                        <th>Eco Points</th>
-                        <th>Eco Score</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-
-                    <tr>
-                        <td>🥇 1</td>
-                        <td>Student A</td>
-                        <td>920</td>
-                        <td>95</td>
-                    </tr>
-
-                    <tr>
-                        <td>🥈 2</td>
-                        <td>Student B</td>
-                        <td>875</td>
-                        <td>91</td>
-                    </tr>
-
-                    <tr>
-                        <td>🥉 3</td>
-                        <td>Student C</td>
-                        <td>810</td>
-                        <td>88</td>
-                    </tr>
-
-                    <tr>
-                        <td>4</td>
-                        <td>Eco User</td>
-                        <td id="leaderPoints">120</td>
-                        <td id="leaderScore">75</td>
-                    </tr>
-
-                </tbody>
-
-            </table>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= PROFILE ================= -->
-
-    <section id="profile" class="section">
-
-        <div class="panel profile-card">
-
-            <h2>👤 User Profile</h2>
-
-            <div class="profile-row">
-                <strong>Name</strong>
-                <span id="profileName">Eco User</span>
-            </div>
-
-            <div class="profile-row">
-                <strong>Email</strong>
-                <span id="profileEmail">ecouser@example.com</span>
-            </div>
-
-            <div class="profile-row">
-                <strong>User Type</strong>
-                <span>Student</span>
-            </div>
-
-            <div class="profile-row">
-                <strong>Eco Points</strong>
-                <span id="profilePoints">120</span>
-            </div>
-
-            <div class="profile-row">
-                <strong>Eco Score</strong>
-                <span id="profileScore">75 / 100</span>
-            </div>
-
-            <button class="btn" onclick="editProfile()">
-                ✏️ Edit Profile
-            </button>
-
-        </div>
-
-    </section>
-
+        <button class="btn" type="submit">Save activity</button>
+      </form>
+    </div>
+    <div class="panel"><h2>Activity history</h2>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Activity</th><th>Description</th><th>Points</th><th>Date</th></tr></thead>
+        <tbody id="activityTable"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- CHALLENGES -->
+  <section id="challenges" class="section">
+    <div class="panel"><h2>Sustainability challenges</h2><div id="challengeList"></div></div>
+  </section>
+
+  <!-- REWARDS -->
+  <section id="rewards" class="section">
+    <div class="panel">
+      <h2 id="rwTitle">Weekly reward</h2>
+      <p id="rwDesc" style="margin-bottom:10px"></p>
+      <p>The student with the most points earned during the week wins. Weeks run Monday to Sunday.</p>
+    </div>
+    <div class="panel"><h2>Streak badges</h2><div class="badges" id="streakBadges"></div></div>
+    <div class="grid2">
+      <div class="panel"><h2>Your rewards</h2><div id="myRewards"></div></div>
+      <div class="panel"><h2>Recent winners</h2><div id="recentWinners"></div></div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section id="leaderboard" class="section">
+    <div class="panel">
+      <h2>Campus leaderboard</h2>
+      <div class="tabs" style="max-width:340px">
+        <button class="tab on" id="lbWeek" type="button">This week</button>
+        <button class="tab" id="lbAll" type="button">All time</button>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Rank</th><th>Student</th><th id="lbPtsHead">Points this week</th></tr></thead>
+        <tbody id="lbBody"></tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- PROFILE -->
+  <section id="profile" class="section">
+    <div class="panel" style="max-width:650px">
+      <h2>Your profile</h2>
+      <div class="prow"><strong>Name</strong><span id="pName"></span></div>
+      <div class="prow"><strong>Email</strong><span id="pEmail"></span></div>
+      <div class="prow"><strong>Contact</strong><span id="pContact"></span></div>
+      <div class="prow"><strong>Eco points</strong><span id="pPoints">0</span></div>
+      <div class="prow"><strong>Eco score</strong><span id="pScore">0 / 100</span></div>
+      <div class="prow"><strong>Weekly rewards won</strong><span id="pWins">0</span></div>
+      <div class="prow"><strong>Badge</strong><span id="pBadge"></span></div>
+      <button class="btn" id="editName">✏️ Edit name</button>
+    </div>
+  </section>
 </main>
+</div>
 
+<div id="certModal" hidden>
+  <div class="cert-wrap">
+    <div id="cert"></div>
+    <div class="cert-actions">
+      <button class="btn" id="certPrint" type="button">Print or save as PDF</button>
+      <button class="btn light" id="certClose" type="button">Close</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
 
 <script>
+/* ================= SETUP ================= */
+const API_BASE = "http://127.0.0.1:5000";
+const $ = id => document.getElementById(id);
+let token = localStorage.getItem("ecotrack_token");
+let state = { points: 0, score: 0, wins: 0, weekEnds: null, lbMode: "week" };
+const TZ = -new Date().getTimezoneOffset();   // minutes east of UTC
+const ICONS = {"Recycling":"♻️","Plastic Reduction":"🧴","Food Waste Reduction":"🍱",
+               "Public Transport":"🚌","Walking":"🚶","Sustainable":"🌱"};
+const TITLES = {dashboard:"Dashboard",activity:"Add activity",challenges:"Challenges",
+                rewards:"Rewards",leaderboard:"Leaderboard",profile:"Profile"};
 
-    /* ================= DATA ================= */
-
-    let ecoPoints = Number(localStorage.getItem("ecoPoints")) || 120;
-    let ecoScore = Number(localStorage.getItem("ecoScore")) || 75;
-
-    let activities =
-        JSON.parse(localStorage.getItem("activities")) || [];
-
-
-    /* ================= NAVIGATION ================= */
-
-    const navButtons = document.querySelectorAll(".nav-btn");
-
-    const sections = document.querySelectorAll(".section");
-
-    navButtons.forEach(button => {
-
-        button.addEventListener("click", function () {
-
-            const sectionId = this.dataset.section;
-
-            navButtons.forEach(btn =>
-                btn.classList.remove("active")
-            );
-
-            this.classList.add("active");
-
-            sections.forEach(section =>
-                section.classList.remove("active")
-            );
-
-            document
-                .getElementById(sectionId)
-                .classList.add("active");
-
-            const titles = {
-
-                dashboard: "EcoTrack Dashboard",
-
-                activity: "Add Sustainability Activity",
-
-                challenges: "Eco Challenges",
-
-                achievements: "Achievements",
-
-                leaderboard: "Campus Leaderboard",
-
-                profile: "User Profile"
-
-            };
-
-            document.getElementById("pageTitle").textContent =
-                titles[sectionId];
-
-        });
-
-    });
-
-
-    /* ================= POINT SYSTEM ================= */
-
-    function getPoints(activity) {
-
-        const points = {
-
-            Recycling: 10,
-
-            Plastic: 5,
-
-            Food: 7,
-
-            Transport: 6,
-
-            Walking: 8,
-
-            Sustainable: 10
-
-        };
-
-        return points[activity] || 5;
-    }
-
-
-  
-    
-/* ================= ADD ACTIVITY ================= */
-
-document
-    .getElementById("activityForm")
-    .addEventListener("submit", async function(event) {
-        event.preventDefault();
-
-        const type = document.getElementById("activityType").value;
-        const amount = document.getElementById("activityAmount").value.trim();
-
-        if (!type || !amount) {
-            alert("Please fill in all fields.");
-            return;
-        }
-
-        try {
-            const response = await fetch("http://127.0.0.1:5000/api/activities", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    activity_type: type,
-                    description: amount
-                })
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                alert(result.error || "Could not save activity.");
-                return;
-            }
-
-            alert("Activity saved successfully!");
-
-            this.reset();
-
-            await loadBackendData();
-
-        } catch (error) {
-            console.error("Backend connection error:", error);
-            alert("Could not connect to EcoTrack backend. Please check that Flask is running.");
-        }
-    });
-
-/* ================= LOAD BACKEND DATA ================= */
-
-async function loadBackendData() {
-    try {
-        const [dashboardResponse, activitiesResponse] =
-            await Promise.all([
-                fetch("http://127.0.0.1:5000/api/dashboard"),
-                fetch("http://127.0.0.1:5000/api/activities")
-            ]);
-
-        if (!dashboardResponse.ok || !activitiesResponse.ok) {
-            throw new Error("Could not load EcoTrack data.");
-        }
-
-        const dashboard = await dashboardResponse.json();
-        const data = await activitiesResponse.json();
-
-        // Use the real database values
-        ecoPoints = dashboard.total_eco_points;
-        ecoScore = dashboard.eco_score;
-
-        activities = data.activities.map(item => ({
-            type: item.activity_type,
-            amount: item.description,
-            points: item.points,
-            date: item.created_at
-                ? new Date(item.created_at).toLocaleDateString()
-                : ""
-        }));
-
-        // Refresh the existing dashboard
-        updateDashboard();
-        updateActivityTable();
-        updateRecentActivities();
-
-        // Keep the browser's cached values in sync
-        localStorage.setItem("ecoPoints", ecoPoints);
-        localStorage.setItem("ecoScore", ecoScore);
-        localStorage.setItem("activities", JSON.stringify(activities));
-
-    } catch (error) {
-        console.error("Could not load backend data:", error);
-        alert("Could not load EcoTrack data. Check that Flask is running.");
-    }
+function esc(text) {
+  const d = document.createElement("div");
+  d.textContent = text;
+  return d.innerHTML;
 }
 
-    /* ================= DASHBOARD UPDATE ================= */
-
-    function updateDashboard() {
-
-        document.getElementById("ecoPoints").textContent =
-            ecoPoints;
-
-        document.getElementById("ecoScore").textContent =
-            ecoScore;
-
-        document.getElementById("scoreCircle").textContent =
-            ecoScore;
-
-        document.getElementById("activityCount").textContent =
-            activities.length;
-
-        document.getElementById("profilePoints").textContent =
-            ecoPoints;
-
-        document.getElementById("profileScore").textContent =
-            ecoScore + " / 100";
-
-        document.getElementById("leaderPoints").textContent =
-            ecoPoints;
-
-        document.getElementById("leaderScore").textContent =
-            ecoScore;
-
-    }
-
-
-    /* ================= ACTIVITY TABLE ================= */
-
-    function updateActivityTable() {
-
-        const table =
-            document.getElementById("activityTable");
-
-        table.innerHTML = "";
-
-        if (activities.length === 0) {
-
-            table.innerHTML = `
-                <tr>
-                    <td colspan="4">
-                        No activities recorded yet.
-                    </td>
-                </tr>
-            `;
-
-            return;
-        }
-
-
-        activities
-            .slice()
-            .reverse()
-            .forEach(activity => {
-
-                const row =
-                    document.createElement("tr");
-
-                row.innerHTML = `
-
-                    <td>${getActivityIcon(activity.type)}
-                        ${activity.type}
-                    </td>
-
-                    <td>${escapeHTML(activity.amount)}</td>
-
-                    <td>
-                        <strong style="color:#2e7d32;">
-                            +${activity.points}
-                        </strong>
-                    </td>
-
-                    <td>${activity.date}</td>
-
-                `;
-
-                table.appendChild(row);
-
-            });
-
-    }
-
-
-    /* ================= RECENT ACTIVITIES ================= */
-
-    function updateRecentActivities() {
-
-        const container =
-            document.getElementById("recentActivities");
-
-        if (activities.length === 0) {
-
-            return;
-
-        }
-
-        container.innerHTML = "";
-
-        activities
-            .slice(-5)
-            .reverse()
-            .forEach(activity => {
-
-                const div =
-                    document.createElement("div");
-
-                div.className = "activity";
-
-                div.innerHTML = `
-
-                    <div class="activity-name">
-
-                        ${getActivityIcon(activity.type)}
-
-                        <span>
-                            ${escapeHTML(activity.type)}
-                            - ${escapeHTML(activity.amount)}
-                        </span>
-
-                    </div>
-
-                    <span class="points">
-                        +${activity.points} pts
-                    </span>
-
-                `;
-
-                container.appendChild(div);
-
-            });
-
-    }
-
-
-    /* ================= ICON ================= */
-
-    function getActivityIcon(type) {
-
-        const icons = {
-
-            Recycling: "♻️",
-
-            Plastic: "🧴",
-
-            Food: "🍱",
-
-            Transport: "🚌",
-
-            Walking: "🚶",
-
-            Sustainable: "🌱"
-
-        };
-
-        return icons[type] || "🌱";
-
-    }
-
-
-    /* ================= SECURITY ================= */
-
-    function escapeHTML(text) {
-
-        const div = document.createElement("div");
-
-        div.textContent = text;
-
-        return div.innerHTML;
-
-    }
-
-
-    /* ================= PROFILE ================= */
-
-    function editProfile() {
-
-        const name =
-            prompt(
-                "Enter your name:",
-                document.getElementById("profileName").textContent
-            );
-
-        if (!name || name.trim() === "") {
-
-            return;
-
-        }
-
-        const cleanName = name.trim();
-
-        document.getElementById("profileName").textContent =
-            cleanName;
-
-        document.getElementById("topUserName").textContent =
-            cleanName;
-
-        localStorage.setItem(
-            "userName",
-            cleanName
-        );
-
-    }
-
-
-    /* ================= LOAD USER ================= */
-
-    function loadUser() {
-
-        const savedName =
-            localStorage.getItem("userName");
-
-        if (savedName) {
-
-            document.getElementById("profileName").textContent =
-                savedName;
-
-            document.getElementById("topUserName").textContent =
-                savedName;
-
-        }
-
-    }
-
-
-    /* ================= INITIALIZE ================= */
-
-    loadUser();
-
-    updateDashboard();
-
-    updateActivityTable();
-
-    updateRecentActivities();
-
-    loadBackendData();
-
-/* =============== LOGIN & REGISTRATION =============== */
-
-const authScreen = document.getElementById("authScreen");
-const appShell = document.getElementById("appShell");
-
-document.getElementById("showLogin").addEventListener("click", function () {
-    document.getElementById("loginForm").style.display = "block";
-    document.getElementById("registerForm").style.display = "none";
-    document.getElementById("authMessage").textContent = "";
-});
-
-document.getElementById("showRegister").addEventListener("click", function () {
-    document.getElementById("loginForm").style.display = "none";
-    document.getElementById("registerForm").style.display = "block";
-    document.getElementById("authMessage").textContent = "";
-});
-
-function openDashboard(user) {
-    authScreen.style.display = "none";
-    appShell.style.display = "block";
-
-    document.getElementById("topUserName").textContent = user.full_name;
-    document.getElementById("profileName").textContent = user.full_name;
-    document.getElementById("profileEmail").textContent = user.email;
-
-    localStorage.setItem("userName", user.full_name);
-    loadBackendData();
+function toast(message, isError) {
+  const t = $("toast");
+  t.textContent = message;
+  t.className = "show" + (isError ? " bad" : "");
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => { t.className = ""; }, 3200);
 }
 
-document.getElementById("registerForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
+async function api(path, options = {}) {
+  const headers = { "Content-Type": "application/json" };
+  if (token) headers.Authorization = "Bearer " + token;
 
-    const message = document.getElementById("authMessage");
-    message.textContent = "Creating your account...";
+  let res;
+  try {
+    res = await fetch(API_BASE + path, { ...options, headers });
+  } catch (e) {
+    throw new Error("Cannot reach the EcoTrack server. Check that Flask is running.");
+  }
 
-    const user = {
-        full_name: document.getElementById("registerName").value.trim(),
-        email: document.getElementById("registerEmail").value.trim(),
-        contact_number: document.getElementById("registerContact").value.trim(),
-        password: document.getElementById("registerPassword").value
-    };
+  const data = await res.json().catch(() => ({}));
 
-    try {
-        const response = await fetch("http://127.0.0.1:5000/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(user)
-        });
+  if (res.status === 401 && token) {
+    logout();
+    throw new Error(data.error || "Please log in again.");
+  }
+  if (!res.ok) throw new Error(data.error || "Something went wrong.");
+  return data;
+}
 
-        const result = await response.json();
+function fmtDate(iso) {
+  return iso ? new Date(iso).toLocaleDateString() : "";
+}
 
-        if (!response.ok) {
-            message.textContent = result.error || "Registration failed.";
-            return;
-        }
+/* ================= AUTH ================= */
+function setAuthMode(isLogin) {
+  $("loginForm").hidden = !isLogin;
+  $("registerForm").hidden = isLogin;
+  $("showLogin").classList.toggle("on", isLogin);
+  $("showRegister").classList.toggle("on", !isLogin);
+  $("authMessage").textContent = "";
+}
+$("showLogin").onclick = () => setAuthMode(true);
+$("showRegister").onclick = () => setAuthMode(false);
 
-        message.textContent = "Account created! Logging you in...";
+function startSession(data) {
+  token = data.token;
+  localStorage.setItem("ecotrack_token", token);
+  openApp(data.user);
+}
 
-        // Register first, then authenticate using the new account.
-        const loginResponse = await fetch("http://127.0.0.1:5000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                email: user.email,
-                password: user.password
-            })
-        });
+function openApp(user) {
+  $("authScreen").hidden = true;
+  $("appShell").hidden = false;
+  setName(user.full_name);
+  $("pEmail").textContent = user.email;
+  $("pContact").textContent = user.contact_number || "";
+  showSection("dashboard");
+}
 
-        const loginResult = await loginResponse.json();
+function setName(name) {
+  $("topUserName").textContent = name;
+  $("pName").textContent = name;
+}
 
-        if (!loginResponse.ok) {
-            message.textContent = "Account created. Please log in.";
-            document.getElementById("loginEmail").value = user.email;
-            document.getElementById("loginForm").style.display = "block";
-            document.getElementById("registerForm").style.display = "none";
-            return;
-        }
+function logout() {
+  token = null;
+  localStorage.removeItem("ecotrack_token");
+  $("appShell").hidden = true;
+  $("authScreen").hidden = false;
+  $("loginForm").reset();
+  setAuthMode(true);
+}
+$("logoutBtn").onclick = logout;
 
-        openDashboard({
-            full_name: loginResult.user.full_name,
-            email: loginResult.user.email
-        });
-
-    } catch (error) {
-        console.error(error);
-        message.textContent = "Cannot connect to the backend. Make sure Flask is running.";
-    }
+$("registerForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("authMessage");
+  msg.style.color = "";
+  msg.textContent = "Creating your account...";
+  try {
+    startSession(await api("/api/register", {
+      method: "POST",
+      body: JSON.stringify({
+        full_name: $("registerName").value.trim(),
+        email: $("registerEmail").value.trim(),
+        contact_number: $("registerContact").value.trim(),
+        password: $("registerPassword").value
+      })
+    }));
+    $("registerForm").reset();
+  } catch (err) {
+    msg.style.color = "var(--bad)";
+    msg.textContent = err.message;
+  }
 });
 
-document.getElementById("loginForm").addEventListener("submit", async function (event) {
-    event.preventDefault();
-
-    const message = document.getElementById("authMessage");
-    message.textContent = "Checking your login...";
-
-    const credentials = {
-        email: document.getElementById("loginEmail").value.trim(),
-        password: document.getElementById("loginPassword").value
-    };
-
-    try {
-        const response = await fetch("http://127.0.0.1:5000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(credentials)
-        });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-            message.textContent = result.error || "Invalid email or password.";
-            return;
-        }
-
-        openDashboard({
-            full_name: result.user.full_name,
-            email: result.user.email
-        });
-
-    } catch (error) {
-        console.error(error);
-        message.textContent = "Cannot connect to the backend. Make sure Flask is running.";
-    }
+$("loginForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const msg = $("authMessage");
+  msg.style.color = "";
+  msg.textContent = "Checking your login...";
+  try {
+    startSession(await api("/api/login", {
+      method: "POST",
+      body: JSON.stringify({
+        email: $("loginEmail").value.trim(),
+        password: $("loginPassword").value
+      })
+    }));
+    $("authMessage").textContent = "";
+  } catch (err) {
+    msg.style.color = "var(--bad)";
+    msg.textContent = err.message;
+  }
 });
 
+/* ================= NAVIGATION ================= */
+function showSection(id) {
+  document.querySelectorAll(".nav").forEach(b => b.classList.toggle("on", b.dataset.section === id));
+  document.querySelectorAll(".section").forEach(s => s.classList.toggle("on", s.id === id));
+  $("pageTitle").textContent = TITLES[id];
+
+  const loaders = { dashboard: loadDashboard, activity: loadActivities, challenges: loadChallenges,
+                    rewards: loadRewards, leaderboard: loadLeaderboard, profile: loadProfile };
+  loaders[id]().catch(err => toast(err.message, true));
+}
+document.querySelectorAll(".nav").forEach(b => b.onclick = () => showSection(b.dataset.section));
+
+/* ================= DASHBOARD ================= */
+async function loadDashboard() {
+  const [d, acts, recs, wk, st] = await Promise.all([
+    api("/api/dashboard"), api("/api/activities"),
+    api("/api/recommendations"), api("/api/leaderboard/weekly"),
+    api("/api/streak?tz=" + TZ)
+  ]);
+
+  state.points = d.total_eco_points;
+  state.score = d.eco_score;
+  $("ecoScore").textContent = d.eco_score;
+  $("ecoPoints").textContent = d.total_eco_points;
+  $("activityCount").textContent = d.total_activities;
+  $("co2").textContent = d.total_co2_saved_kg;
+  $("ringNum").textContent = d.eco_score;
+  $("ring").style.setProperty("--p", d.eco_score);
+
+  // activity mix
+  const entries = Object.entries(d.activities_by_type);
+  const max = Math.max(1, ...entries.map(e => e[1]));
+  $("mix").innerHTML = entries.length
+    ? entries.map(([type, n]) => `
+        <div class="bar-row">
+          <div class="bar-top"><span>${ICONS[type] || "🌱"} ${esc(type)}</span><span>${n}</span></div>
+          <div class="bar"><i style="width:${(n / max) * 100}%"></i></div>
+        </div>`).join("")
+    : `<p class="empty">No activities yet. Add your first one to see your mix here.</p>`;
+
+  // recent activities
+  $("recent").innerHTML = acts.activities.length
+    ? acts.activities.slice(0, 5).map(a => `
+        <div class="row">
+          <span>${ICONS[a.activity_type] || "🌱"} ${esc(a.activity_type)} - ${esc(a.description)}</span>
+          <span class="pts">+${a.points} pts</span>
+        </div>`).join("")
+    : `<p class="empty">Nothing logged yet. Use Add activity to start earning points.</p>`;
+
+  // suggestions
+  $("tips").innerHTML = recs.recommendations.map(r =>
+    `<div class="tip"><b>${esc(r.title)}</b>${esc(r.message)}</div>`).join("");
+
+  renderHero(wk);
+  renderStreak(st);
+}
+
+function renderHero(wk) {
+  $("heroIcon").textContent = wk.reward.icon;
+  $("heroTitle").textContent = wk.reward.title;
+  $("heroDesc").textContent = wk.reward.description;
+  state.weekEnds = new Date(wk.week_ends_at);
+  tickTimer();
+
+  const top = wk.leaderboard[0];
+  const me = wk.leaderboard.find(r => r.is_you);
+  let text;
+  if (!top) text = "No one has points yet this week. Log an activity to take the lead.";
+  else if (top.is_you) text = `You're in first place with ${top.weekly_points} points.`;
+  else text = `${top.name} leads with ${top.weekly_points} points.` +
+              (me ? ` You're #${me.rank} with ${me.weekly_points}.` : " Log an activity to join the race.");
+  $("heroLead").textContent = text;
+}
+
+function renderStreak(st) {
+  $("streakNum").textContent = st.current_streak;
+
+  let msg = st.logged_today
+    ? "You've logged today. Come back tomorrow to keep your streak."
+    : st.current_streak > 0
+      ? "Log an activity today to keep your streak alive."
+      : "Log an activity today to start a streak.";
+
+  if (st.next_milestone) {
+    const left = st.next_milestone - st.current_streak;
+    msg += ` ${left} more day${left === 1 ? "" : "s"} to your next badge.`;
+  }
+  $("streakMsg").textContent = msg;
+}
+
+function renderStreakBadges(st) {
+  $("streakBadges").innerHTML = st.badges.map(b => `
+    <div class="sb ${b.earned ? "" : "locked"}">
+      <span>${esc(b.icon)}</span>
+      <strong>${esc(b.title)}</strong><br>
+      <small>${b.earned ? "Earned" : b.days + "-day streak to unlock"}</small>
+    </div>`).join("");
+}
+
+function tickTimer() {
+  if (!state.weekEnds) return;
+  const ms = state.weekEnds - new Date();
+  if (ms <= 0) { $("heroTimer").textContent = "Week over"; return; }
+  const m = Math.floor(ms / 60000);
+  $("heroTimer").textContent =
+    `${Math.floor(m / 1440)}d ${Math.floor((m % 1440) / 60)}h ${m % 60}m`;
+}
+setInterval(tickTimer, 30000);
+
+/* ================= ACTIVITIES ================= */
+async function loadActivities() {
+  const data = await api("/api/activities");
+  $("activityTable").innerHTML = data.activities.length
+    ? data.activities.map(a => `
+        <tr>
+          <td>${ICONS[a.activity_type] || "🌱"} ${esc(a.activity_type)}</td>
+          <td>${esc(a.description)}</td>
+          <td><strong class="pts">+${a.points}</strong></td>
+          <td>${fmtDate(a.created_at)}</td>
+        </tr>`).join("")
+    : `<tr><td colspan="4" class="empty">No activities recorded yet.</td></tr>`;
+}
+
+$("activityForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  const btn = e.target.querySelector("button");
+  btn.disabled = true;
+  try {
+    const res = await api("/api/activities", {
+      method: "POST",
+      body: JSON.stringify({
+        activity_type: $("activityType").value,
+        description: $("activityAmount").value.trim(),
+        tz: TZ
+      })
+    });
+    toast(`Activity saved: +${res.activity.points} points`);
+    e.target.reset();
+    loadActivities();
+  } catch (err) {
+    toast(err.message, true);
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+/* ================= CHALLENGES ================= */
+async function loadChallenges() {
+  const data = await api("/api/challenges");
+  $("challengeList").innerHTML = data.challenges.map(c => `
+    <div class="challenge">
+      <div>
+        <h3>${esc(c.title)}</h3>
+        <p>${esc(c.description)}</p>
+        <p><strong>${c.reward_points} points</strong></p>
+      </div>
+      ${c.completed
+        ? `<span class="done">✅ Completed</span>`
+        : `<button class="btn small" data-id="${c.id}">Mark complete</button>`}
+    </div>`).join("");
+
+  $("challengeList").querySelectorAll("button[data-id]").forEach(btn => {
+    btn.onclick = async () => {
+      btn.disabled = true;
+      try {
+        const res = await api(`/api/challenges/${btn.dataset.id}/complete`, { method: "POST" });
+        toast(`${res.challenge || "Challenge"}: +${res.points_awarded} points`);
+        loadChallenges();
+      } catch (err) {
+        toast(err.message, true);
+        btn.disabled = false;
+      }
+    };
+  });
+}
+
+/* ================= REWARDS ================= */
+async function loadRewards() {
+  const [data, st] = await Promise.all([api("/api/rewards"), api("/api/streak?tz=" + TZ)]);
+  renderStreakBadges(st);
+  state.wins = data.total_won;
+  $("rwTitle").textContent = `${data.reward.icon} ${data.reward.title}`;
+  $("rwDesc").textContent = data.reward.description;
+
+  state.myRewards = data.my_rewards;
+  state.rewardIcon = data.reward.icon;
+
+  $("myRewards").innerHTML = data.my_rewards.length
+    ? `<p style="margin-bottom:8px">${badgeHTML(data)}</p>` + data.my_rewards.map((r, i) => `
+        <div class="row">
+          <span>${data.reward.icon} ${esc(r.title)}<br><small>Week of ${fmtDate(r.week_start)} - ${r.points} pts</small></span>
+          <button class="btn small" data-cert="${i}">Certificate</button>
+        </div>`).join("")
+    : `<p class="empty">You haven't won yet. Finish a week in first place to earn this reward.</p>`;
+
+  $("myRewards").querySelectorAll("[data-cert]").forEach(btn => {
+    btn.onclick = () => showCertificate(state.myRewards[btn.dataset.cert]);
+  });
+
+  $("recentWinners").innerHTML = data.recent_winners.length
+    ? data.recent_winners.map(w => `
+        <div class="row">
+          <span>${esc(w.name)}${w.is_you ? " (you)" : ""}<br><small>Week of ${fmtDate(w.week_start)}</small></span>
+          <span class="pts">${w.points} pts</span>
+        </div>`).join("")
+    : `<p class="empty">No weeks have finished yet. The first winner will appear here.</p>`;
+}
+
+function badgeHTML(data) {
+  return `<span class="badge">${esc(data.reward.icon)} ${esc(data.reward.title)} ×${data.total_won}</span>`;
+}
+
+/* ================= CERTIFICATE ================= */
+function showCertificate(r) {
+  const opts = { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" };
+  const start = new Date(r.week_start);
+  const end = new Date(start.getTime() + 6 * 86400000);
+  const range = `${start.toLocaleDateString(undefined, opts)} to ${end.toLocaleDateString(undefined, opts)}`;
+
+  $("cert").innerHTML = `
+    <div style="font-size:46px">${esc(state.rewardIcon || "🏆")}</div>
+    <h2 class="big">Certificate of Achievement</h2>
+    <p>EcoTrack proudly presents this certificate to</p>
+    <div class="who">${esc($("pName").textContent)}</div>
+    <p>for earning the title of</p>
+    <p style="font-size:22px"><strong>${esc(r.title)}</strong></p>
+    <p>for the week of ${esc(range)}, with ${r.points} eco points.</p>
+    <p style="margin-top:24px;color:var(--muted)">Small habits. Bigger impact.</p>`;
+  $("certModal").hidden = false;
+  $("certClose").focus();
+}
+$("certPrint").onclick = () => window.print();
+$("certClose").onclick = () => { $("certModal").hidden = true; };
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") $("certModal").hidden = true;
+});
+
+/* ================= LEADERBOARD ================= */
+const MEDAL = { 1: "🥇 1", 2: "🥈 2", 3: "🥉 3" };
+
+function setLbMode(mode) {
+  state.lbMode = mode;
+  $("lbWeek").classList.toggle("on", mode === "week");
+  $("lbAll").classList.toggle("on", mode === "all");
+  $("lbPtsHead").textContent = mode === "week" ? "Points this week" : "Eco points";
+  loadLeaderboard().catch(err => toast(err.message, true));
+}
+$("lbWeek").onclick = () => setLbMode("week");
+$("lbAll").onclick = () => setLbMode("all");
+
+async function loadLeaderboard() {
+  const weekly = state.lbMode === "week";
+  const data = await api(weekly ? "/api/leaderboard/weekly" : "/api/leaderboard");
+  const rows = data.leaderboard;
+
+  $("lbBody").innerHTML = rows.length
+    ? rows.map(r => `
+        <tr class="${r.is_you ? "you" : ""}">
+          <td>${MEDAL[r.rank] || r.rank}</td>
+          <td>${esc(r.name)}${r.is_you ? " (you)" : ""}</td>
+          <td>${weekly ? r.weekly_points : r.eco_points}</td>
+        </tr>`).join("")
+    : `<tr><td colspan="3" class="empty">No points yet. Be the first on the board.</td></tr>`;
+}
+
+/* ================= PROFILE ================= */
+async function loadProfile() {
+  const [me, dash, rewards] = await Promise.all([
+    api("/api/me"), api("/api/dashboard"), api("/api/rewards")
+  ]);
+  setName(me.user.full_name);
+  $("pEmail").textContent = me.user.email;
+  $("pContact").textContent = me.user.contact_number;
+  $("pPoints").textContent = dash.total_eco_points;
+  $("pScore").textContent = dash.eco_score + " / 100";
+  $("pWins").textContent = rewards.total_won;
+  $("pBadge").innerHTML = rewards.total_won
+    ? badgeHTML(rewards)
+    : `<span class="empty">None yet. Finish a week in first place.</span>`;
+}
+
+$("editName").onclick = async () => {
+  const name = prompt("Enter your name:", $("pName").textContent);
+  if (!name || !name.trim()) return;
+  try {
+    const res = await api("/api/me", { method: "PUT", body: JSON.stringify({ full_name: name.trim() }) });
+    setName(res.full_name);
+    toast("Name updated");
+  } catch (err) {
+    toast(err.message, true);
+  }
+};
+
+/* ================= START ================= */
+(async function init() {
+  if (!token) return;
+  try {
+    const me = await api("/api/me");
+    openApp(me.user);
+  } catch (err) {
+    // expired or invalid session: the login screen stays visible
+  }
+})();
 </script>
-
 </body>
 </html>
